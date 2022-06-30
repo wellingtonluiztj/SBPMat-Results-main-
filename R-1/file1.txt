@@ -1,1 +1,5 @@
+30 de Junho de 2022
 
+Hoje, faremos testes de permeabilidade para diferentes geometrias com mesma porosidade. 
+
+O modelo poroso usado é o granular com gemetrias de poros quadrada, circular e triangular.
