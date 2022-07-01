@@ -1,7 +1,7 @@
 #!/bin/bash
 
 git add .
-read -p "Núemro do commit: " i>>j
+read -p "Núemro do commit: " $j
 
 git commit -m "commit ${j}"
 
