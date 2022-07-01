@@ -2,8 +2,7 @@
 
 git add .
 
-echo "número do commit: "
-read $number.
+read -p 'numero do commit: ' number
 
 git commit -m "commit $number"
 
