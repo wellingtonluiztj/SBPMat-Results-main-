@@ -1,6 +1,8 @@
 #!/bin/bash
 
 git add .
+ 
+git log | grep "commit"
 
 read -p 'numero do commit: ' number
 

@@ -37,8 +37,8 @@ elif geometry == 'square':
     l=h
     shape = (h,l) 
     img3 = np.zeros(shape, dtype=np.uint8)
-    for xindex in range(9,len(img3)-10):
-        for yindex in range(9,len(img3)-10):
+    for xindex in range(4,len(img3)-4):
+        for yindex in range(4,len(img3)-5):
             img3[xindex][yindex] = np.clip(img3[xindex][yindex], 1, 1)
     rock_matrix = np.hstack((np.vstack((img3,img3,img3)), np.vstack((img3,img3, img3)), np.vstack((img3,img3,img3))))
     plt.imshow(rock_matrix)
