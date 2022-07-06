@@ -1,4 +1,4 @@
 # SBPMat-Results-main-
 
-![alt text](/SBPMat-Results-main-/to/System.png)
+![alt text](SBPMat-Results-main-/System.png)
 
