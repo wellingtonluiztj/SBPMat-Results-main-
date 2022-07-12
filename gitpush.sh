@@ -2,7 +2,7 @@
 
 git add .
  
-git log | grep "commit"
+git log | head
 
 read -p 'numero do commit: ' number
 
