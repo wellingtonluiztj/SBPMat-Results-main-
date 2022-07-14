@@ -40,6 +40,7 @@ principal = np.zeros(forma_principal, dtype = np.uint8)
 ##############################################################################################
 ################################ Pontos Aleatórios ###########################################
 ##############################################################################################
+
 numero_de_graos=int(input('Número de grãos: '))
 # Gerar centros aleatórios para alocação de img1 em principal
 for i in range(numero_de_graos): # for para cada esfera
@@ -63,3 +64,44 @@ for i in range(numero_de_graos): # for para cada esfera
                 l += 1
 
 plt.imshow(principal)
+
+##############################################################################################
+################################ Alocando em um array ########################################
+##############################################################################################
+
+p = []
+
+for i in range(len(principal)):
+    for j in range(len(principal[0])):
+        if principal[i,j] == 1:
+            p.append([j, len(principal)-i])
+
+p = np.array(p)
+
+
+p = np.array(p)
+
+x_inlet = 20
+ 
+file = open('Poros_Regulares_Circulares','w')
+np.savetxt(file, p + x_inlet, fmt='%i')
+
+
+########################################################################################################################
+########################################### cálculo de Porosidade ######################################################
+########################################################################################################################
+
+pts = np.argwhere(principal==1)
+
+
+soma_rock = np.sum(principal==1)
+soma_vac = np.sum(principal==0)
+forma = np.shape(principal)
+
+
+#sea.heatmap(rock_matrix==1)
+
+#soma_zeros
+
+porosity = soma_vac/(soma_vac + soma_rock)
+print(f'A porosidade do modelo é {porosity}.')

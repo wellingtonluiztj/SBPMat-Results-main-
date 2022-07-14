@@ -4,15 +4,9 @@
 Created on Mon Jul 11 11:18:51 2022
 
 @author: wsantos
-"""#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jul 11 11:18:51 2022
-
-@author: wsantos
 """
 import numpy as np
-from skimage.draw import disk
+from skimage.morphology import square
 import random
 import matplotlib.pyplot as plt
 
@@ -26,14 +20,11 @@ O círculo deve ter tamanho
 a = 120#int(input('Vertical: '))
 b = 120#int(input('Horizontal: '))
 forma_principal = (a,b)#tamanho da matriz grande
-forma_img1 = (int(a/5), int(b/5))#tamanho da matriz do círculo, 5 vezes menor que a principal
+forma_img1 = (int(a/20), int(b/20))#tamanho da matriz do círculo, 5 vezes menor que a principal
 r = forma_principal[0]/15 #Resolução da matriz do círculo 10 vezes menor que a principal
 r = int(r)
 
-
-img1 = np.zeros(forma_img1, dtype=np.uint8) # zeros
-raio, centro = disk((r,r), r, shape = forma_img1) #Círculo com raio r dentro da matriz img1
-img1[raio, centro]=1
+img1 = square(4*r)
 
 r_quad = int(forma_img1[0]/2)
 
@@ -69,51 +60,40 @@ for i in range(numero_de_graos): # for para cada esfera
                 l += 1
 
 plt.imshow(principal)
-import numpy as np
-from skimage.draw import disk
-import random
-import matplotlib.pyplot as plt
 
-'''
-O círculo deve ter tamanho 
-'''
-#############################################################################################
-########################### Dimensão da matriz do círculo ###################################
-#############################################################################################
+p = []
 
-a = 120#int(input('Vertical: '))
-b = 120#int(input('Horizontal: '))
-forma_principal = (a,b)#tamanho da matriz grande
-forma_img1 = (int(a/5), int(b/5))#tamanho da matriz do círculo, 5 vezes menor que a principal
-r = ((forma_img1[1])/2) #Resolução da matriz do círculo 10 vezes menor que a principal
-r = int(r)
+for i in range(len(principal)):
+    for j in range(len(principal[0])):
+        if principal[i,j] == 1:
+            p.append([j, len(principal)-i])
+
+p = np.array(p)
 
 
-img1 = np.zeros(forma_img1, dtype=np.uint8) # zeros
-raio, centro = disk((r,r), r, shape = forma_img1) #Círculo com raio r dentro da matriz img1
-img1[raio, centro]=1
+p = np.array(p)
+
+x_inlet = 20
+ 
+file = open('Poros_Regulares_Quadrados','w')
+np.savetxt(file, p + x_inlet, fmt='%i')
 
 
-#--------------------Dimensão da Matriz principal-----------------------------
-principal = np.zeros(forma_principal, dtype = np.uint8)
+########################################################################################################################
+########################################### cálculo de Porosidade ######################################################
+########################################################################################################################
+
+pts = np.argwhere(principal==1)
 
 
-# Raio da esfera
+soma_rock = np.sum(principal==1)
+soma_vac = np.sum(principal==0)
+forma = np.shape(principal)
 
-##############################################################################################
-################################ Pontos Aleatórios ###########################################
-##############################################################################################
-numero_de_graos=int(input('Número de grãos: '))
-# Gerar centros aleatórios para alocação de img1 em principal
-for a in range(numero_de_graos): # for para cada esfera
-    x_centro = random.randint(r,len(principal[0])-r) # cria o ponto central aleatório
-    y_centro = random.randint(r,len(principal[1])-r)
-    # Substituir valores de img1 em principal
-    m = 0
-    for i in range(x_centro-r,x_centro+r):
-        m += 1
-        n = 0
-        for j in range(y_centro-r,y_centro+r):
-            n += 1
-            principal[i][j]=img1[m][n]
-            
+
+#sea.heatmap(rock_matrix==1)
+
+#soma_zeros
+
+porosity = soma_vac/(soma_vac + soma_rock)
+print(f'A porosidade do modelo é {porosity}.')
