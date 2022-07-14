@@ -58,8 +58,7 @@ p = np.array(p)
 
 x_inlet = 20
 cwd = os.getcwd() 
-directory = '{}/R-1/obst-wall.d90'.format(cwd)
-file = open(directory, "w")
+file = open('Poros_Regulares_Circulares','w')
 np.savetxt(file, p + x_inlet, fmt='%i')
 
 
@@ -80,7 +79,7 @@ forma = np.shape(rock_matrix)
 #soma_zeros
 
 porosity = soma_vac/(soma_vac + soma_rock)
-print(porosity)
+print(f'A porosidade é {porosity}.')
 
 
 

@@ -31,4 +31,5 @@ for i in range(len(img1[0])):
             lista.append([j, len(img1)-i])
 lista = np.array(lista)
 
-file = open()
+file = open('Circulo_Simples', 'w')
+np.savetxt(file, lista, fmt = '%i')
