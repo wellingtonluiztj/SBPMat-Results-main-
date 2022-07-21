@@ -1,1 +1,1 @@
-plot 'circ1' w d lt 2
+plot 'Poros_Regulares_Circulares.dat' w d lt 2

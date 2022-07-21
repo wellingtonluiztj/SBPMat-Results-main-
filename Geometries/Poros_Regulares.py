@@ -26,11 +26,11 @@ geometry = str(input('What geometry do you enter (square or disk)? '))
 
 if geometry == 'disk':
     r = int(input('Choose Disk Radio : ')) #Resolution(matrix dimension)
-    shape = ((2*r)+10, (2*r)+10)  #Array Shape 
+    shape = ((2*r)+2, (2*r)+2)  #Array Shape 
     img1 = np.zeros(shape, dtype=np.uint8) # zeros
     raio, centro = disk((r,r), r, shape = shape) #Generate two different arrays
     img1[raio, centro]=1
-    rock_matrix = np.hstack((np.vstack((img1,img1,img1)), np.vstack((img1,img1, img1)), np.vstack((img1,img1,img1))))
+    rock_matrix = np.hstack((np.vstack((img1,img1,img1)), np.vstack((img1,img1, img1)), np.vstack((img1,img1,img1)),np.vstack((img1,img1,img1))))
     plt.imshow(rock_matrix)
 elif geometry == 'square':
     h = int(input('Square Size: '))
@@ -58,7 +58,7 @@ p = np.array(p)
 
 x_inlet = 20
 cwd = os.getcwd() 
-file = open('Poros_Regulares_Circulares','w')
+file = open('Poros_Regulares_Circulares.dat','w')
 np.savetxt(file, p + x_inlet, fmt='%i')
 
 
