@@ -5,10 +5,10 @@ Created on Tue Jul 19 21:00:02 2022
 
 @author: wsantos
 """
-
 import numpy as np
 import matplotlib.pyplot as plt
 import glob
+from matplotlib import colors
 from matplotlib.colors import Normalize
 from scipy import ndimage
 from matplotlib import animation
@@ -19,7 +19,7 @@ datas = glob.glob("gnu_output/*")#Lista os pathnames na pasta de forma desordena
 datas.sort()#Organiza os nomes dos caminhos
 #exemplo de um arquivo
 
-data =  np.loadtxt("gnu_output/RES-010.dat",skiprows=1) #carrega a matriz
+data =  np.loadtxt("gnu_output/RES-003.dat",skiprows=1) #carrega a matriz
 
 x,y = data[:,0],data[:,1] #escreve nas variáveis x e y os valores da coluna 0 e 1 respectivamente
 
@@ -39,7 +39,7 @@ for i in range(len(den_1)):
 
 plt.figure(figsize=(12,12))
 
-plt.subplot(311)
+plt.subplot(311)  
 plt.title("Parede")
 plt.imshow(is_wall)
 plt.colorbar()
@@ -95,15 +95,17 @@ myimages = []
 
 for i in list_of_datas:
     frame = i
-    cmap = plt.cm.jet
+    cmap = colors.ListedColormap(['cyan', 'black', 'yellow'])
+    bounds=[0,0.3,2.5,3]
+    norm = colors.BoundaryNorm(bounds, cmap.N)
+    #cmap = plt.cm.jet
+    plt.title("Densidade 2")
     plt.axis('off')
-    #norm = Normalize(vmin=np.amin(list_of_datas), vmax=np.amax(list_of_datas))
-    #frame2 = cmap(norm(frame))
-    #frame2 = cmap((frame))
-    imgplot = plt.imshow(frame, cmap=cmap)
+    imgplot = plt.imshow(frame, interpolation='nearest', origin='lower',cmap=cmap, norm=norm)
     myimages.append([imgplot])
 
-plt.colorbar()
+plt.colorbar(ax = None,extend ='both', orientation="horizontal" , ticks=[0,0.3,2.5,3])
+#plt.colorbar()
 
 #interval -> tanto faz
 my_anim = animation.ArtistAnimation(fig, myimages, interval=True, blit=False, repeat=True)
