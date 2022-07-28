@@ -5,37 +5,41 @@ Created on Tue Jul 19 21:00:02 2022
 
 @author: wsantos
 """
-
 import numpy as np
 import matplotlib.pyplot as plt
 import glob
+from matplotlib import colors
 from matplotlib.colors import Normalize
 from scipy import ndimage
 from matplotlib import animation
 
 
 #carrega as matrizes e organiza em ordem
-datas = glob.glob("datas/*")
-datas.sort()
+datas = glob.glob("gnu_output/*")#Lista os pathnames na pasta de forma desordenada
+datas.sort()#Organiza os nomes dos caminhos
 #exemplo de um arquivo
 
-data =  np.loadtxt("datas/RES-010.dat",skiprows=1) #carrega a matriz
+data =  np.loadtxt("gnu_output/RES-003.dat",skiprows=1) #carrega a matriz
 
-x,y = data[:,0],data[:,1] #carrega x e y
+x,y = data[:,0],data[:,1] #escreve nas variáveis x e y os valores da coluna 0 e 1 respectivamente
 
-den_1 = data[:,3] #perfil de densidade 1
-den_2 = data[:,4] #perfil de densidade 2
-
-is_wall = data[:,7] #verifica se é parede ou não
+den_1,den_2,is_wall = data[:,3], data[:,4],data[:,7] #perfil de densidade 2
+#verifica se é parede ou não
 
 den_1 = den_1.reshape((int(np.amax(x)),int(np.amax(y)))) # reshape da densidade para array
 den_2 = den_2.reshape((int(np.amax(x)),int(np.amax(y)))) # reshape da densidade para array
-
 is_wall = is_wall.reshape((int(np.amax(x)),int(np.amax(y))))# 
+den_1 = np.transpose(den_1)
+is_wall = np.transpose(is_wall)
+
+for i in range(len(den_1)):
+    for j in range(len(den_1[1])):
+        if den_1[i,j]==0:
+            den_1[i,j]=4
 
 plt.figure(figsize=(12,12))
 
-plt.subplot(311)
+plt.subplot(311)  
 plt.title("Parede")
 plt.imshow(is_wall)
 plt.colorbar()
@@ -63,14 +67,23 @@ for file in datas:#[:10]:
     
     y,x = data[:,0],data[:,1]
 
-    den_1 = data[:,3]
-    den_2 = data[:,4]
-    is_wall = data[:,7]
+    x,y = data[:,0],data[:,1] #escreve nas variáveis x e y os valores da coluna 0 e 1 respectivamente
 
-    den_1 = den_1.reshape((int(np.amax(x)),int(np.amax(y))))
-    den_2 = den_2.reshape((int(np.amax(x)),int(np.amax(y))))
+    den_1,den_2,is_wall = data[:,3], data[:,4],data[:,7] #perfil de densidade 2
+    #verifica se é parede ou não
 
-    is_wall = is_wall.reshape(int(np.amax(y)),(int(np.amax(x))))
+    den_1 = den_1.reshape((int(np.amax(x)),int(np.amax(y)))) # reshape da densidade para array
+    den_2 = den_2.reshape((int(np.amax(x)),int(np.amax(y)))) # reshape da densidade para array
+    is_wall = is_wall.reshape((int(np.amax(x)),int(np.amax(y))))# 
+
+
+    for i in range(len(den_1)):
+        for j in range(len(den_1[1])):
+            if den_1[i,j]==0:
+                den_1[i,j]=4
+    #den_1 = np.transpose(den_1)
+    den_1 = np.transpose(den_1)
+    is_wall = np.transpose(is_wall)
     
     list_of_datas.append(is_wall + den_1) # adiciona quem virará vídeo
 
@@ -82,17 +95,21 @@ myimages = []
 
 for i in list_of_datas:
     frame = i
-    cmap = plt.cm.jet
-    norm = Normalize(vmin=np.amin(list_of_datas), vmax=np.amax(list_of_datas))
-    frame2 = cmap(norm(frame))
-    imgplot = plt.imshow(frame, cmap=cmap)
+    cmap = colors.ListedColormap(['cyan', 'black', 'yellow'])
+    bounds=[0,0.3,2.5,3]
+    norm = colors.BoundaryNorm(bounds, cmap.N)
+    #cmap = plt.cm.jet
+    plt.title("Densidade 2")
+    plt.axis('off')
+    imgplot = plt.imshow(frame, interpolation='nearest', origin='lower',cmap=cmap, norm=norm)
     myimages.append([imgplot])
 
-plt.colorbar()
+plt.colorbar(ax = None,extend ='both', orientation="horizontal" , ticks=[0,0.3,2.5,3])
+#plt.colorbar()
 
 #interval -> tanto faz
-my_anim = animation.ArtistAnimation(fig, myimages, interval=0.001, blit=False, repeat=True)
+my_anim = animation.ArtistAnimation(fig, myimages, interval=True, blit=False, repeat=True)
 
 f = 'animation.mp4'
-writervideo = animation.FFMpegWriter(fps=12)
+writervideo = animation.FFMpegWriter(fps=6)
 my_anim.save(f, writer=writervideo)
