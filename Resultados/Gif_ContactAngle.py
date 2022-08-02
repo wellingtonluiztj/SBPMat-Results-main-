@@ -8,6 +8,7 @@ Created on Tue Jul 19 21:00:02 2022
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import colors
 import glob
 from matplotlib.colors import Normalize
 from scipy import ndimage
@@ -15,11 +16,11 @@ from matplotlib import animation
 
 
 #carrega as matrizes e organiza em ordem
-datas = glob.glob("gnu_output_AC/*")#Lista os pathnames na pasta de forma desordenada
+datas = glob.glob("gnu_output/*")#Lista os pathnames na pasta de forma desordenada
 datas.sort()#Organiza os nomes dos caminhos
 #exemplo de um arquivo
 
-data =  np.loadtxt("gnu_output_AC/RES-010.dat",skiprows=1) #carrega a matriz
+data =  np.loadtxt("gnu_output/RES-100.dat",skiprows=1) #carrega a matriz
 
 x,y = data[:,0],data[:,1] #escreve nas variáveis x e y os valores da coluna 0 e 1 respectivamente
 
@@ -37,22 +38,7 @@ for i in range(len(den_1)):
         if den_1[i,j]==0:
             den_1[i,j]=4
 
-plt.figure(figsize=(12,12))
 
-plt.subplot(311)
-plt.title("Parede")
-plt.imshow(is_wall)
-plt.colorbar()
-
-plt.subplot(312)
-plt.title("Densidade 1")
-plt.imshow(den_1)
-plt.colorbar()
-
-plt.subplot(313)
-plt.title("Densidade 2")
-plt.imshow(den_2)
-plt.colorbar()
 
 plt.tight_layout()
 
@@ -81,7 +67,6 @@ for file in datas:#[:10]:
         for j in range(len(den_1[1])):
             if den_1[i,j]==0:
                 den_1[i,j]=4
-    #den_1 = np.transpose(den_1)
     den_1 = np.transpose(den_1)
     is_wall = np.transpose(is_wall)
     
@@ -95,15 +80,14 @@ myimages = []
 
 for i in list_of_datas:
     frame = i
-    cmap = plt.cm.jet
+    cmap = colors.ListedColormap(['cyan', 'red', 'black','yellow'])
+    bounds=[0.0,0.3, 0.5, 2.0, 4.0]
+    norm = colors.BoundaryNorm(bounds, cmap.N)
     plt.axis('off')
-    #norm = Normalize(vmin=np.amin(list_of_datas), vmax=np.amax(list_of_datas))
-    #frame2 = cmap(norm(frame))
-    #frame2 = cmap((frame))
-    imgplot = plt.imshow(frame, cmap=cmap)
+    imgplot = plt.imshow(frame, interpolation='nearest', origin='lower',cmap=cmap, norm=norm)
     myimages.append([imgplot])
 
-plt.colorbar()
+#plt.colorbar()
 
 #interval -> tanto faz
 my_anim = animation.ArtistAnimation(fig, myimages, interval=True, blit=False, repeat=True)
@@ -111,4 +95,42 @@ my_anim = animation.ArtistAnimation(fig, myimages, interval=True, blit=False, re
 f = 'animation_AC.mp4'
 writervideo = animation.FFMpegWriter(fps=6)
 my_anim.save(f, writer=writervideo)
+
+meiox = int(np.shape(den_1)[0]/2)
+
+plt.figure()
+plt.title("Ângulo de Contato")
+cmap = colors.ListedColormap(['cyan', 'red', 'black','yellow'])
+bounds=[0.0,0.3, 0.5, 2.0, 4.0]
+norm = colors.BoundaryNorm(bounds, cmap.N)
+#plt.axis('off')
+#################################  MEDIR AQUI  ###################
+cross = 208
+plus = 43
+##################################################################
+
+
+plt.imshow(list_of_datas[100], interpolation='nearest', origin='lower',cmap=cmap, norm=norm)
+plt.hlines(y=meiox, xmin=cross, xmax=cross+plus, color='b')
+plt.vlines(x=cross, ymin=0.0, ymax=np.shape(den_1)[0], color='b')
+plt.vlines(x=cross+plus, ymin=0.0, ymax=np.shape(den_1)[0], color='b')
+
+
+
+'''
+Cálculo do Âgulo de Contato
+'''
+ 
+h = (cross+plus) - cross
+w = np.shape(den_1)[0]
+
+R_m = (h**2 + (w/2)**2)/(2*h)
+
+theta = np.arcsin((w/2)/R_m)
+
+pi=3.14
+theta = theta*(180/pi)
+theta = 90 - theta
+print(theta)
+
 
